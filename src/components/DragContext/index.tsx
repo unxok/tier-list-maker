@@ -160,6 +160,8 @@ export const useDraggable = (props: UseDraggableProps) => {
 		draggedEl.style.pointerEvents = "none";
 	};
 
+	let placeholderEl: HTMLElement;
+
 	const onMouseOver = (e: MouseEvent) => {
 		const { draggedId } = ctx.details;
 		if (!draggedId && draggedId !== 0) return;
@@ -168,10 +170,16 @@ export const useDraggable = (props: UseDraggableProps) => {
 		const el = ctx.refObj[props.id];
 		const draggedEl = ctx.refObj[draggedId];
 		if (!el || !draggedEl) return;
-		const placeholderEl = draggedEl.cloneNode() as HTMLElement;
-		// placeholderEl.style.position = 'static';
+		placeholderEl = draggedEl.cloneNode(true) as HTMLElement;
 		placeholderEl.style.translate = "0 0";
+		// placeholderEl.style.position = "static";
 		el.insertAdjacentElement("afterend", placeholderEl);
+		console.log("should be appended");
+	};
+
+	const onMouseLeave = (e: MouseEvent) => {
+		if (!placeholderEl) return;
+		placeholderEl.remove();
 	};
 
 	onMount(() => {
@@ -181,7 +189,7 @@ export const useDraggable = (props: UseDraggableProps) => {
 		console.log("added");
 	});
 
-	const listeners = { onMouseDown };
+	const listeners = { onMouseDown, onMouseLeave };
 
 	return {
 		listeners,
